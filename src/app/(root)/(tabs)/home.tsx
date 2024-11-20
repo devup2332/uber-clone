@@ -1,10 +1,12 @@
-import { Text } from "react-native"
-import { SafeAreaView } from "react-native-safe-area-context"
+import { View, Text } from 'react-native'
+import React from 'react'
 
-const Home = () => {
-  return <SafeAreaView>
-    <Text>Home page</Text>
-  </SafeAreaView>
+const HomePage = () => {
+  return (
+    <View>
+      <Text>HomePage</Text>
+    </View>
+  )
 }
 
-export default Home
+export default HomePage
