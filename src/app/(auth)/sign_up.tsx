@@ -1,4 +1,12 @@
-import { View, Text, ScrollView, Image, ImageBackground } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  Image,
+  ImageBackground,
+  Modal,
+  TouchableOpacity,
+} from "react-native";
 import React, { useState } from "react";
 import { icons, images } from "@/constants";
 import CustomInput from "@/components/CustomInput";
@@ -6,15 +14,69 @@ import { StatusBar } from "expo-status-bar";
 import CustomButton from "@/components/CustomButton";
 import { Link } from "expo-router";
 import OAuth from "@/components/OAuth";
+import { useSignUp } from "@clerk/clerk-expo";
 
 const SignUp = () => {
+  const { signUp, isLoaded, setActive } = useSignUp();
   const [form, setForm] = useState({
     name: "",
     email: "",
     password: "",
   });
 
-  const onSignUpPress = () => {};
+  const [visibleModal, setVisibleModal] = useState(false);
+
+  const [verification, setVerification] = useState({
+    state: "default",
+    error: "",
+    code: "",
+  });
+
+  const onSignUpPress = async () => {
+    if (!isLoaded) return;
+    try {
+      await signUp.create({
+        emailAddress: form.email,
+        password: form.password,
+      });
+
+      await signUp.prepareEmailAddressVerification({
+        strategy: "email_code",
+      });
+      setVerification({ ...verification, state: "pending" });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const onPressVerify = async () => {
+    if (!isLoaded) return;
+    try {
+      const completeSignUp = await signUp.attemptEmailAddressVerification({
+        code: verification.code,
+      });
+
+      if (completeSignUp.status === "complete") {
+        await setActive({
+          session: completeSignUp.createdSessionId,
+        });
+
+        setVerification({ ...verification, state: "success" });
+      } else {
+        setVerification({
+          ...verification,
+          state: "failed",
+          error: "Verification Failed",
+        });
+      }
+    } catch (error) {
+      setVerification({
+        ...verification,
+        state: "failed",
+        error: "Verification Failed",
+      });
+    }
+  };
 
   return (
     <ScrollView
@@ -52,7 +114,12 @@ const SignUp = () => {
             onChangeText={(value) => setForm({ ...form, password: value })}
           />
 
-          <CustomButton title="Sign Up" onPress={onSignUpPress} className="mt-2"/>
+          <CustomButton
+            title="Sign Up"
+            // onPress={onSignUpPress}
+            onPress={() => setVisibleModal(true)}
+            className="mt-2"
+          />
 
           <OAuth />
           <View className="flex-1" />
@@ -65,6 +132,24 @@ const SignUp = () => {
           </Link>
         </View>
       </View>
+      <Modal visible={visibleModal} animationType="fade" transparent>
+        <View className=" items-center justify-center flex-1 bg-black/40 ">
+          <View className="rounded-xl bg-white elevation-lg shadow-xl w-11/12 py-14 px-10 items-center gap-5">
+            <Image
+              source={images.check}
+              className="w-32 h-32"
+              resizeMode="contain"
+            />
+            <Text className="text-4xl font-plus-b text-center">Verified !</Text>
+            <Text className="text-neutral-400 font-plus-r text-xl text-center">Yoy have successfully verified your account</Text>
+            <CustomButton
+              title="Browse Home"
+              className="w-full"
+              onPress={() => setVisibleModal(false)}
+            />
+          </View>
+        </View>
+      </Modal>
     </ScrollView>
   );
 };
