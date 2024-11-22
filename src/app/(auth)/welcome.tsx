@@ -14,7 +14,7 @@ const WelcomePage = () => {
   const [index, setIndex] = useState(0);
   const isLastSlide = index === data.welcomePages.length - 1;
   return (
-    <SafeAreaView className="flex-1 pb-10 bg-white">
+    <SafeAreaView className="flex-1 pb-10">
       <StatusBar style="dark" />
       <TouchableOpacity
         onPress={() => router.replace("/(auth)/sign_up")}

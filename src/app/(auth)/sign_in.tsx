@@ -4,17 +4,36 @@ import { icons, images } from "@/constants";
 import CustomInput from "@/components/CustomInput";
 import { StatusBar } from "expo-status-bar";
 import CustomButton from "@/components/CustomButton";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import OAuth from "@/components/OAuth";
+import { useSignIn } from "@clerk/clerk-expo";
 
 const SignUp = () => {
   const [form, setForm] = useState({
-    name: "",
     email: "",
     password: "",
   });
+  const { signIn, isLoaded, setActive } = useSignIn();
 
-  const onSignInPress = () => {};
+  const onSignInPress = async () => {
+    if (!isLoaded) return;
+    try {
+      const attempt = await signIn.create({
+        identifier: form.email,
+        password: form.password,
+      });
+
+      if (attempt.status === "complete") {
+        await setActive({
+          session: attempt.createdSessionId,
+        });
+
+        router.replace("/(root)/(tabs)/home");
+      }
+    } catch (err: any) {
+      console.log({ err: err.message });
+    }
+  };
 
   return (
     <ScrollView
@@ -57,7 +76,7 @@ const SignUp = () => {
             href="/sign_up"
             className="text-base text-center text-general-200 font-plus-r mb-4"
           >
-            <Text>Dont you have an account ?   </Text>
+            <Text>Dont you have an account ? </Text>
             <Text className="text-primary-500 font-bold">Sign Up</Text>
           </Link>
         </View>
@@ -66,4 +85,4 @@ const SignUp = () => {
   );
 };
 
-export default SignUp
+export default SignUp;

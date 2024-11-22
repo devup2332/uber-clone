@@ -48,7 +48,7 @@ const CustomButton: React.FC<Props> = (props) => {
     <TouchableOpacity
       onPress={onPress}
       className={clsx(
-        "rounded-full flex py-4 flex-row justify-center items-center shadow-md shadow-neutral-400/70 elevation-md",
+        "rounded-full flex py-4 flex-row justify-center items-center shadow-xl shadow-black/70 elevation-md",
         getBgVariantStyle(bgVariant),
         className,
       )}

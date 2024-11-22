@@ -5,17 +5,22 @@ import {
   Image,
   ImageBackground,
   Modal,
-  TouchableOpacity,
 } from "react-native";
+import { ReactNativeModal } from "react-native-modal";
 import React, { useState } from "react";
 import { icons, images } from "@/constants";
 import CustomInput from "@/components/CustomInput";
 import { StatusBar } from "expo-status-bar";
 import CustomButton from "@/components/CustomButton";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import OAuth from "@/components/OAuth";
 import { useSignUp } from "@clerk/clerk-expo";
 
+interface Verification {
+  state: "default" | "pending" | "success" | "failed";
+  error: string;
+  code: string;
+}
 const SignUp = () => {
   const { signUp, isLoaded, setActive } = useSignUp();
   const [form, setForm] = useState({
@@ -24,9 +29,7 @@ const SignUp = () => {
     password: "",
   });
 
-  const [visibleModal, setVisibleModal] = useState(false);
-
-  const [verification, setVerification] = useState({
+  const [verification, setVerification] = useState<Verification>({
     state: "default",
     error: "",
     code: "",
@@ -84,6 +87,40 @@ const SignUp = () => {
       showsVerticalScrollIndicator={false}
     >
       <StatusBar style="dark" />
+      <Modal
+        visible={verification.state === "pending"}
+        statusBarTranslucent
+        animationType="fade"
+        transparent
+      >
+        <View className="items-center justify-center flex-1 h-full bg-black/70">
+          <View className="rounded-xl bg-white elevation-lg shadow-xl w-11/12 py-14 px-10 items-stretch gap-5">
+            <Text className="text-3xl font-plus-b">Verification</Text>
+            <Text className="font-plus-r">
+              We've sent a verification code to your email
+            </Text>
+            <CustomInput
+              icon={icons.lock}
+              placeholder="123456"
+              labelStyle="text-xl "
+              label="Code"
+              keyboardType="numeric"
+              value={verification.code}
+              onChangeText={(value) =>
+                setVerification({ ...verification, code: value })
+              }
+            />
+            {verification.error && (
+              <Text className="text-red-500 text-sm">{verification.error}</Text>
+            )}
+            <CustomButton
+              title="Verify Email"
+              onPress={onPressVerify}
+              bgVariant="success"
+            />
+          </View>
+        </View>
+      </Modal>
       <View className="flex-1">
         <ImageBackground source={images.signUpCar} className="h-[250px]">
           <Text className="absolute bottom-10 left-5 text-2xl font-plus-b">
@@ -116,8 +153,7 @@ const SignUp = () => {
 
           <CustomButton
             title="Sign Up"
-            // onPress={onSignUpPress}
-            onPress={() => setVisibleModal(true)}
+            onPress={onSignUpPress}
             className="mt-2"
           />
 
@@ -132,8 +168,13 @@ const SignUp = () => {
           </Link>
         </View>
       </View>
-      <Modal visible={visibleModal} animationType="fade" transparent>
-        <View className=" items-center justify-center flex-1 bg-black/40 ">
+      <Modal
+        visible={verification.state === "success"}
+        transparent
+        statusBarTranslucent
+        animationType="fade"
+      >
+        <View className="items-center justify-center flex-1 h-full bg-black/70">
           <View className="rounded-xl bg-white elevation-lg shadow-xl w-11/12 py-14 px-10 items-center gap-5">
             <Image
               source={images.check}
@@ -141,11 +182,13 @@ const SignUp = () => {
               resizeMode="contain"
             />
             <Text className="text-4xl font-plus-b text-center">Verified !</Text>
-            <Text className="text-neutral-400 font-plus-r text-xl text-center">Yoy have successfully verified your account</Text>
+            <Text className="text-neutral-400 font-plus-r text-xl text-center">
+              Yoy have successfully verified your account
+            </Text>
             <CustomButton
               title="Browse Home"
               className="w-full"
-              onPress={() => setVisibleModal(false)}
+              onPress={() => router.replace("/(root)/(tabs)/home")}
             />
           </View>
         </View>

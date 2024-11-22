@@ -7,17 +7,20 @@ import {
   ImageProps,
   TextInput,
   Platform,
+  KeyboardTypeOptions,
 } from "react-native";
 import React from "react";
 import { cn } from "@/lib/utilities";
+import { ClassValue } from "clsx";
 
 interface Props {
   label: string;
   labelStyle?: string;
   icon: ImageProps;
   secureTextEntry?: boolean;
-  containerStyle?: string;
+  containerStyle?: ClassValue;
   inputStyle?: string;
+  keyboardType?: KeyboardTypeOptions;
   iconStyle?: string;
   placeholder?: string;
   value: string;
@@ -31,6 +34,7 @@ const CustomInput: React.FC<Props> = ({
   containerStyle,
   iconStyle,
   placeholder,
+  keyboardType,
   inputStyle,
   value,
   onChangeText,
@@ -56,10 +60,11 @@ const CustomInput: React.FC<Props> = ({
             )}
 
             <TextInput
+              keyboardType={keyboardType}
               secureTextEntry={secureTextEntry}
               placeholder={placeholder}
+              returnKeyType="emergency-call"
               value={value}
-              
               onChangeText={onChangeText}
               className={cn(
                 "rounded-full p-4 font-plus-sb text-[15px] flex-1 text-left placeholder:text-secondary-500",
