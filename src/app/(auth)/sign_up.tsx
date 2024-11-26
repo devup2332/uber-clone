@@ -6,7 +6,6 @@ import {
   ImageBackground,
   Modal,
 } from "react-native";
-import { ReactNativeModal } from "react-native-modal";
 import React, { useState } from "react";
 import { icons, images } from "@/constants";
 import CustomInput from "@/components/CustomInput";
@@ -15,6 +14,7 @@ import CustomButton from "@/components/CustomButton";
 import { Link, router } from "expo-router";
 import OAuth from "@/components/OAuth";
 import { useSignUp } from "@clerk/clerk-expo";
+import { fetchAPI } from "@/lib/fetch";
 
 interface Verification {
   state: "default" | "pending" | "success" | "failed";
@@ -60,6 +60,17 @@ const SignUp = () => {
       });
 
       if (completeSignUp.status === "complete") {
+        // Creating User in Neon Database
+        const response = await fetchAPI("/(api)/users", {
+          method: "POST",
+          body: JSON.stringify({
+            name: form.name,
+            email: form.email,
+            clerkId: completeSignUp.createdUserId,
+          }),
+        });
+        console.log({ response });
+
         await setActive({
           session: completeSignUp.createdSessionId,
         });
