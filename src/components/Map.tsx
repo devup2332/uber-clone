@@ -4,17 +4,10 @@ import { calculateRegion, generateMarkersFromData } from "@/lib/maps";
 import { useDriverStore, useLocationStore } from "@/store";
 import { MarkerData } from "@/types/type";
 import React, { useEffect, useState } from "react";
-import { Text, View } from "react-native";
+import { View } from "react-native";
 import MapView, { Marker, PROVIDER_DEFAULT } from "react-native-maps";
 
 const Map = () => {
-  const INITIAL_REGION = {
-    latitude: 37.78825,
-    longitude: -122.4324,
-    latitudeDelta: 0.0922,
-    longitudeDelta: 0.0421,
-  };
-
   const {
     userLongitude,
     userLatitude,
@@ -41,7 +34,7 @@ const Map = () => {
     setMarkers(newMarkers);
   }, []);
   return (
-    <View className="flex-1">
+    <View className="flex-1 rounded-lg overflow-hidden">
       <MapView
         provider={PROVIDER_DEFAULT}
         initialRegion={region}

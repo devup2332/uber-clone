@@ -61,7 +61,7 @@ const SignUp = () => {
 
       if (completeSignUp.status === "complete") {
         // Creating User in Neon Database
-        const response = await fetchAPI("/(api)/users", {
+        await fetchAPI("/(api)/users", {
           method: "POST",
           body: JSON.stringify({
             name: form.name,
@@ -69,7 +69,6 @@ const SignUp = () => {
             clerkId: completeSignUp.createdUserId,
           }),
         });
-        console.log({ response });
 
         await setActive({
           session: completeSignUp.createdSessionId,

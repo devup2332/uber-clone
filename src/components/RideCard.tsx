@@ -11,7 +11,7 @@ interface Props {
 const RideCard: React.FC<Props> = ({ ride }) => {
   const mapURI = `https://maps.geoapify.com/v1/staticmap?style=osm-bright-smooth&width=600&height=400&center=lonlat:${ride.destination_longitude},${ride.destination_latitude}&zoom=14&apiKey=${process.env.EXPO_PUBLIC_GEOAPIFY_API_KEY}`;
   return (
-    <View className="flex items-stretch elevation-7 bg-white rounded-lg shadow-sm shadow-neutral-300 mb-3 p-5 elevation-lg">
+    <View className="flex items-stretch elevation-7 bg-white rounded-lg shadow-sm shadow-neutral-300 p-5 elevation-lg">
       <View className="flex-row items-center gap-5 mb-3">
         <Image
           className="w-[80px] h-[90px] rounded-lg"

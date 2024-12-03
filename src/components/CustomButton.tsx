@@ -48,10 +48,13 @@ const CustomButton: React.FC<Props> = (props) => {
     <TouchableOpacity
       onPress={onPress}
       className={clsx(
-        "rounded-full flex py-4 flex-row justify-center items-center shadow-xl shadow-black/70 elevation-md",
+        "rounded-full flex py-4 flex-row justify-center items-center",
         getBgVariantStyle(bgVariant),
         className,
       )}
+      style={{
+        boxShadow: "0px 0px 22px rgba(0,0,0,0.10)",
+      }}
     >
       {IconLeft && <IconLeft className="mr-2" />}
       <Text

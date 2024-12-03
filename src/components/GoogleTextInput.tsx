@@ -6,7 +6,6 @@ import { Image, View } from "react-native";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 
 const GOOGLE_PLACES_API_KEY = process.env.EXPO_PUBLIC_GOOGLE_API_KEY;
-console.log({ GOOGLE_PLACES_API_KEY });
 
 const GoogleTextInput: React.FC<GoogleInputProps> = ({
   containerStyle,
@@ -17,16 +16,16 @@ const GoogleTextInput: React.FC<GoogleInputProps> = ({
   return (
     <View
       className={cn(
-        "flex flex-row items-center justify-start bg-white gap-4 py-1 rounded-xl mb-5",
+        "flex flex-row items-center h-16 justify-start bg-white gap-4 rounded-xl",
         containerStyle,
       )}
       style={{
-        boxShadow: "0px 0px 22px rgba(0,0,0,0.15)",
+        boxShadow: "0px 0px 22px rgba(0,0,0,0.1)",
       }}
     >
       <GooglePlacesAutocomplete
-        fetchDetails
-        placeholder="Where you want to go?"
+        fetchDetails={true}
+        placeholder="Search"
         debounce={200}
         styles={{
           textInputContainer: {
@@ -34,12 +33,15 @@ const GoogleTextInput: React.FC<GoogleInputProps> = ({
             justifyContent: "center",
             borderRadius: 20,
             marginHorizontal: 20,
+            position: "relative",
+            shadowColor: "#d4d4d4",
           },
           textInput: {
             backgroundColor: textInputBackgroundColor
               ? textInputBackgroundColor
-              : "transparent",
+              : "white",
             fontSize: 16,
+            fontFamily: "plus-r",
             fontWeight: "600",
             marginTop: 5,
             width: "100%",
@@ -49,23 +51,17 @@ const GoogleTextInput: React.FC<GoogleInputProps> = ({
             backgroundColor: textInputBackgroundColor
               ? textInputBackgroundColor
               : "white",
-            position: "relative",
-            top: 0,
+            position: "absolute",
+            top: 64,
             width: "100%",
             borderRadius: 10,
             shadowColor: "#d4d4d4",
             zIndex: 99,
           },
-          poweredContainer: {
-            display: "none",
-          },
         }}
         onPress={(data, details = null) => {
-          handlePress({
-            latitude: details?.geometry.location.lat!,
-            longitude: details?.geometry.location.lng!,
-            address: data.description,
-          });
+          console.log("Selected");
+          console.log({ details, data });
         }}
         query={{
           key: GOOGLE_PLACES_API_KEY,
