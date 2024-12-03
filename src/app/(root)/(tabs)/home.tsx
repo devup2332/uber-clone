@@ -7,7 +7,8 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useState } from "react";
+import * as Location from "expo-location";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { recentRides } from "@/constants/data";
@@ -18,9 +19,12 @@ import { useAuth, useUser } from "@clerk/clerk-expo";
 import { router } from "expo-router";
 import GoogleTextInput from "@/components/GoogleTextInput";
 import Map from "@/components/Map";
+import { useLocationStore } from "@/store";
 
 const HomePage = () => {
   const [loading, setLoading] = useState(true);
+  const { setUserLocation, setDestinationLocation } = useLocationStore();
+  const [hasPermissions, setHasPermissions] = useState(false);
   const { user } = useUser();
   const { signOut } = useAuth();
 
@@ -29,6 +33,33 @@ const HomePage = () => {
     router.push("/(auth)/sign_in");
   };
   const handleDestionationPress = () => {};
+
+  const requestLocation = async () => {
+    try {
+      const { status } = await Location?.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        setHasPermissions(false);
+        return;
+      }
+
+      const location = await Location.getCurrentPositionAsync();
+      const address = await Location.reverseGeocodeAsync({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+      });
+
+      setUserLocation({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+        address: `${address[0].name}, ${address[0].region}`,
+      });
+    } catch (err) {
+      console.log({ err });
+    }
+  };
+  useEffect(() => {
+    requestLocation();
+  }, []);
   return (
     <SafeAreaView className={"flex-1 bg-general-500 px-5"}>
       <StatusBar style="dark" />
@@ -73,11 +104,7 @@ const HomePage = () => {
                 />
               </TouchableOpacity>
             </View>
-            <GoogleTextInput
-              icon={icons.google}
-              containerStyle=""
-              handlerPress={handleDestionationPress}
-            />
+            <GoogleTextInput handlePress={handleDestionationPress} />
             <Text className="text-xl font-plus-b my-5">
               Your Current Location
             </Text>
