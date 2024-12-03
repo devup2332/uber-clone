@@ -17,9 +17,12 @@ const GoogleTextInput: React.FC<GoogleInputProps> = ({
   return (
     <View
       className={cn(
-        "flex flex-row items-center justify-start gap-4 py-1 rounded-xl mb-5 shadow-black border-2 border-black/20 ",
+        "flex flex-row items-center justify-start bg-white gap-4 py-1 rounded-xl mb-5",
         containerStyle,
       )}
+      style={{
+        boxShadow: "0px 0px 22px rgba(0,0,0,0.15)",
+      }}
     >
       <GooglePlacesAutocomplete
         fetchDetails
@@ -31,8 +34,6 @@ const GoogleTextInput: React.FC<GoogleInputProps> = ({
             justifyContent: "center",
             borderRadius: 20,
             marginHorizontal: 20,
-            position: "relative",
-            shadowColor: "#d4d4d4",
           },
           textInput: {
             backgroundColor: textInputBackgroundColor
