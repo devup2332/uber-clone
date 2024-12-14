@@ -19,13 +19,10 @@ export const POST = async (req: Request, res: Response) => {
         customer: customer_id,
       },
     );
-    console.log({ paymentMethod });
 
     const result = await stripe.paymentIntents.confirm(payment_intent_id, {
       payment_method: paymentMethod.id,
     });
-    console.log({ result });
-
     return new Response(
       JSON.stringify({
         success: true,

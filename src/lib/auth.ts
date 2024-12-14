@@ -13,15 +13,11 @@ export const googleOAuth = async (
   try {
     const { createdSessionId, signUp, signIn, setActive, authSessionResult } =
       await startOAuthFlow();
-    console.log({ signUp, signIn, createdSessionId, authSessionResult });
 
     if (createdSessionId) {
       if (setActive) await setActive({ session: createdSessionId });
 
       if (signUp?.createdSessionId) {
-        console.log({
-          message: "User SIGNED UP",
-        });
         await fetchAPI("/(api)/users", {
           method: "POST",
           body: JSON.stringify({

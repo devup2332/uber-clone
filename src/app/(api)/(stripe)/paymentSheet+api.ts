@@ -18,7 +18,6 @@ export const POST = async (request: Request) => {
       customer: customer.id,
       type: "card",
     });
-    console.log({ paymentMethods });
     const ephemeralKey = await stripe.ephemeralKeys.create(
       { customer: customer.id },
       { apiVersion: "2024-11-20.acacia" },

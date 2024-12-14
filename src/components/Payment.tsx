@@ -55,11 +55,6 @@ const Payment: React.FC<PaymentProps> = ({
   const initializePaymentSheet = async () => {
     const { customer, ephemeralKey, paymentIntent } =
       await fetchPaymentSheetParams();
-    console.log({
-      customer,
-      ephemeralKey,
-      paymentIntent,
-    });
     const { error } = await initPaymentSheet({
       merchantDisplayName: "Ryde Inc.",
       customerId: customer,
@@ -96,12 +91,7 @@ const Payment: React.FC<PaymentProps> = ({
     const { error, paymentOption } = await presentPaymentSheet();
     if (error) {
       setLoading(false);
-      console.log("Error on opening payment sheet", error);
     } else {
-      console.log({
-        paymentOption,
-      });
-      console.log("Payment sheet opened successfully");
       const { data } = await fetchAPI<any>("/(api)/ride/create", {
         method: "POST",
         headers: {

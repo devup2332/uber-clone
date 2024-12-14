@@ -13,7 +13,6 @@ const OAuth = () => {
   const handleGoogleLogin = useCallback(async () => {
     const result = await googleOAuth(googleStrategy);
     if (result.code === "success") {
-      console.log("Redirected");
       router.navigate("/(root)/(tabs)/home");
     }
   }, []);
