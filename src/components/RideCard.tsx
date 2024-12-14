@@ -8,6 +8,8 @@ interface Props {
   ride: Ride;
 }
 
+const wordLength = 25;
+
 const RideCard: React.FC<Props> = ({ ride }) => {
   const mapURI = `https://maps.geoapify.com/v1/staticmap?style=osm-bright-smooth&width=600&height=400&center=lonlat:${ride.destination_longitude},${ride.destination_latitude}&zoom=14&apiKey=${process.env.EXPO_PUBLIC_GEOAPIFY_API_KEY}`;
   return (
@@ -27,8 +29,14 @@ const RideCard: React.FC<Props> = ({ ride }) => {
           </View>
           <View className="flex flex-row items-center gap-x-2">
             <Image source={icons.point} className="w-5 h-5" />
-            <Text className="text-base font-plus-m" numberOfLines={1}>
-              {ride.destination_address}
+            <Text
+              className="text-base font-plus-m"
+              numberOfLines={1}
+              ellipsizeMode="middle"
+            >
+              {ride.destination_address.length > wordLength
+                ? ride.destination_address.slice(0, wordLength) + " ..."
+                : ride.destination_address}
             </Text>
           </View>
         </View>

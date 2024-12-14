@@ -16,6 +16,8 @@ const Layout = () => {
           marginBottom: 20,
           marginHorizontal: 20,
           paddingBottom: 0,
+          elevation: 0,
+          boxShadow: "0px 0px 20px rgba(0,0,0,0.15)",
           overflow: "hidden",
           justifyContent: "space-between",
           alignItems: "center",

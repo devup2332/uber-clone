@@ -1,10 +1,22 @@
-import { View, Text, Image } from "react-native";
-import React from "react";
+import { View, Text, Image, Alert } from "react-native";
+import React, { useCallback } from "react";
 import CustomButton from "./CustomButton";
 import { icons } from "@/constants";
+import { useOAuth } from "@clerk/clerk-expo";
+import { googleOAuth } from "@/lib/auth";
+import { router } from "expo-router";
 
 const OAuth = () => {
-  const handleGoogleLogin = () => {};
+  const { startOAuthFlow: googleStrategy } = useOAuth({
+    strategy: "oauth_google",
+  });
+  const handleGoogleLogin = useCallback(async () => {
+    const result = await googleOAuth(googleStrategy);
+    if (result.code === "success") {
+      console.log("Redirected");
+      router.navigate("/(root)/(tabs)/home");
+    }
+  }, []);
   return (
     <View className="gap-5">
       <View className="font-plus-r flex-row justify-between items-center gap-5">
@@ -19,6 +31,7 @@ const OAuth = () => {
         className="w-full shadow-none"
         bgVariant="outline"
         textVariant="primary"
+        onPress={handleGoogleLogin}
         IconLeft={() => (
           <Image
             source={icons.google}

@@ -11,8 +11,8 @@ declare interface Driver {
 }
 
 declare interface MarkerData {
-  latitude: number;
-  longitude: number;
+  latitude?: number;
+  longitude?: number;
   id: string;
   title: string;
   profile_image_url: string;
@@ -98,6 +98,7 @@ declare interface PaymentProps {
   fullName: string;
   email: string;
   amount: string;
+  setSuccess: (value: boolean) => void;
   driverId: number;
   rideTime: number;
 }

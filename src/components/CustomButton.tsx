@@ -1,4 +1,4 @@
-import { Text, TouchableOpacity } from "react-native";
+import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
 import clsx from "clsx";
 
@@ -10,6 +10,7 @@ interface Props {
   IconLeft?: React.ComponentType<any>;
   IconRight?: React.ComponentType<any>;
   className?: string;
+  loading?: boolean;
 }
 
 const getBgVariantStyle = (variant: Props["bgVariant"]) => {
@@ -43,19 +44,26 @@ const CustomButton: React.FC<Props> = (props) => {
     bgVariant,
     textVariant,
     className,
+    loading,
   } = props;
   return (
     <TouchableOpacity
       onPress={onPress}
+      disabled={loading}
       className={clsx(
-        "rounded-full flex py-4 flex-row justify-center items-center",
+        "rounded-full flex py-4 flex-row justify-center items-center gap-5",
         getBgVariantStyle(bgVariant),
         className,
       )}
       style={{
-        boxShadow: "0px 0px 22px rgba(0,0,0,0.10)",
+        boxShadow: "0px 0px 20px rgba(51,51,51,0.15)",
       }}
     >
+      {loading && (
+        <View>
+          <ActivityIndicator size="small" color="#fff" />
+        </View>
+      )}
       {IconLeft && <IconLeft className="mr-2" />}
       <Text
         className={clsx(

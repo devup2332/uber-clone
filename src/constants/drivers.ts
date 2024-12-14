@@ -1,6 +1,6 @@
-import { Driver } from "@/types/type";
+import { MarkerData } from "@/types/type";
 
-export const drivers: Driver[] = [
+export const drivers = [
   {
     id: "1",
     first_name: "James",

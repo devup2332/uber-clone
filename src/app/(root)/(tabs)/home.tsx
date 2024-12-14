@@ -2,7 +2,6 @@ import {
   ActivityIndicator,
   FlatList,
   Image,
-  ListRenderItemInfo,
   Text,
   TouchableOpacity,
   View,
@@ -10,34 +9,42 @@ import {
 import * as Location from "expo-location";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { StatusBar } from "expo-status-bar";
-import { recentRides } from "@/constants/data";
 import RideCard from "@/components/RideCard";
-import { Ride } from "@/types/type";
 import { icons, images } from "@/constants";
 import { useAuth, useUser } from "@clerk/clerk-expo";
 import { router } from "expo-router";
 import GoogleTextInput from "@/components/GoogleTextInput";
 import Map from "@/components/Map";
 import { useLocationStore } from "@/store";
+import { StatusBar } from "expo-status-bar";
+import { useFetch } from "@/lib/fetch";
+import { Ride } from "@/types/type";
 
 const HomePage = () => {
-  const [loading, setLoading] = useState(true);
   const { setUserLocation, setDestinationLocation } = useLocationStore();
   const [hasPermissions, setHasPermissions] = useState(false);
   const { user } = useUser();
   const { signOut } = useAuth();
+  const { data: recentRides, loading } = useFetch<Ride[]>(
+    `/(api)/ride/${user?.id}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    },
+  );
 
   const handleSignOut = async () => {
     await signOut();
     router.push("/(auth)/sign_in");
   };
+
   const handleDestionationPress = (location: {
     latitude: number;
     longitude: number;
     address: string;
   }) => {
-    console.log({ location });
     setDestinationLocation(location);
     router.push("/(root)/find-ride");
   };
@@ -68,35 +75,39 @@ const HomePage = () => {
   useEffect(() => {
     requestLocation();
   }, []);
+
+  if (loading)
+    return (
+      <View className="flex-1 items-center justify-center">
+        <ActivityIndicator size="small" color="#000" />
+      </View>
+    );
   return (
     <SafeAreaView className="flex-1 bg-general-500">
       <StatusBar style="dark" />
       <FlatList
         data={recentRides}
+        ListEmptyComponent={() => {
+          return (
+            <View className="flex-1 justify-center items-center">
+              <Text className="text-xl font-plus-r">No recent rides</Text>
+              <Image
+                source={images.noResult}
+                className="w-36 h-36"
+                resizeMode="contain"
+              />
+            </View>
+          );
+        }}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           paddingBottom: 100,
           paddingHorizontal: 20,
-          gap: 24,
+          flexGrow: 1,
+          gap: 20,
         }}
-        ListEmptyComponent={() => (
-          <View className="justify-center items-center">
-            {!loading ? (
-              <>
-                <Image
-                  source={images.noResult}
-                  className="h-40 w-40"
-                  alt="No recent rides found"
-                  resizeMode="contain"
-                />
-                <Text className="text-center flex-0 font-plus-r text-lg">
-                  No recent rides founded
-                </Text>
-              </>
-            ) : (
-              <ActivityIndicator size="small" color="#000" />
-            )}
-          </View>
-        )}
+        renderItem={({ item }) => <RideCard ride={item} />}
         ListHeaderComponent={() => (
           <View className="gap-6">
             <View className="flex-row items-center justify-between pt-4">
@@ -116,14 +127,10 @@ const HomePage = () => {
             </View>
             <GoogleTextInput handlePress={handleDestionationPress} />
             <Text className="text-xl font-plus-b">Your Current Location</Text>
-            <View className="h-[300px] flex-1">
+            <View className="w-full h-[300px]">
               <Map />
             </View>
           </View>
-        )}
-        showsVerticalScrollIndicator={false}
-        renderItem={({ item: ride }: ListRenderItemInfo<Ride>) => (
-          <RideCard ride={ride} />
         )}
       />
     </SafeAreaView>
